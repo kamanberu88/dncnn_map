@@ -115,15 +115,19 @@ transform = transforms.Compose([
 ])
 
 # 自作のデータセットを作成
-dataset = NoisyCustomDataset(img_dir='C:\\Users\\kaman\\Desktop\\jpg8k_me\\400', transform=transform)
-batch_size=2
+dataset = NoisyCustomDataset(img_dir='/home/natori21_u/train_data_jaxa/map_train_512/', transform=transform)
+#dataset = NoisyCustomDataset(img_dir='/home/natori21_u/PycharmProjects/make_map1/croppd_images/', transform=transform)
+
+batch_size=6
 
 dataloader = DataLoader(dataset=dataset,
                             batch_size=batch_size,
                             shuffle=True,
+                          pin_memory=True,
+                        num_workers=4
                            )
 
-epochs=30
+epochs=50
 
 
 history={'loss':[]}
@@ -141,6 +145,7 @@ for epoch in range(epochs):
             preds = model(inputs)
 
             loss = criterion(preds, labels) / (2 * len(inputs))
+            #loss = criterion(preds, labels)
             train_loss+=loss.item()
 
             #epoch_losses.update(loss.item(), len(inputs))
@@ -149,16 +154,13 @@ for epoch in range(epochs):
             loss.backward()
             optimizer.step()
 
-            avg_train_loss = train_loss / len(dataloader)
+    #avg_train_loss = train_loss / len(dataloader)
 
-    history['loss'].append(avg_train_loss)
-
-
-
+    history['loss'].append(train_loss)
     if (epoch + 1) % 1 == 0:
-                 print("epoch{} train_loss:{:.4} ".format(epoch,avg_train_loss))
+        print("epoch{} train_loss:{:.4} ".format(epoch,train_loss))
 
-PATH = './reeeeusult3_net.pth'
+PATH = './reeeeusult7_net.pth'
 torch.save(model.state_dict(), PATH)
 
 plt.plot(history['loss'],
@@ -170,6 +172,7 @@ plt.legend(loc='best')
 plt.grid()
 plt.xlabel('epoch')
 plt.ylabel('loss')
+plt.savefig("./dncnn_loss_10000.png")
 plt.show()
 
 

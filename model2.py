@@ -1,6 +1,8 @@
 from torch import nn
 
 from torchinfo import summary
+
+
 class DnCNN(nn.Module):
     def __init__(self, num_layers=17, num_features=64):
         super(DnCNN, self).__init__()
@@ -27,6 +29,3 @@ class DnCNN(nn.Module):
         y = inputs
         residual = self.layers(y)
         return y - residual
-    
-#batch_size = 5
-#summary(model=DnCNN(num_layers=17), input_size=(batch_size, 1, 512, 512))
